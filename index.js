@@ -1,6 +1,7 @@
-// Set the delay time in milliseconds before starting the physics simulation
-const START_DELAY = 2000; // 2 seconds
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.18.0/matter.min.js" integrity="sha512-5T245ZTH0m0RfONiFm2NF0zcYcmAuNzcGyPSQ18j8Bs5Pbfhp5HP1hosrR8XRt5M3kSRqzjNMYpm2+it/AUX/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/pathseg@1.2.1/pathseg.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/poly-decomp@0.3.0/build/decomp.min.js"></script>
+<script>
 const THICCNESS = 60;
 const SVG_PATH_SELECTOR = "#matter-path";
 const SVG_WIDTH_IN_PX = 100;
@@ -31,90 +32,74 @@ var render = Render.create({
     height: matterContainer.clientHeight,
     background: "transparent",
     wireframes: false,
-    showAngleIndicator: false,
-  },
+    showAngleIndicator: false
+  }
 });
 
-// All setup happens immediately, but we'll start the physics after the delay
-setupPhysicsWorld();
+createCircle();
+createSvgBodies();
 
-// Delayed start of the physics simulation
-setTimeout(() => {
-  // run the renderer
-  Render.run(render);
+var ground = Bodies.rectangle(
+  matterContainer.clientWidth / 2,
+  matterContainer.clientHeight + THICCNESS / 2,
+  27184,
+  THICCNESS,
+  { isStatic: true }
+);
 
-  // create runner
-  var runner = Runner.create();
+let leftWall = Bodies.rectangle(
+  0 - THICCNESS / 2,
+  matterContainer.clientHeight / 2,
+  THICCNESS,
+  matterContainer.clientHeight * 5,
+  {
+    isStatic: true
+  }
+);
 
-  // run the engine
-  Runner.run(runner, engine);
+let rightWall = Bodies.rectangle(
+  matterContainer.clientWidth + THICCNESS / 2,
+  matterContainer.clientHeight / 2,
+  THICCNESS,
+  matterContainer.clientHeight * 5,
+  { isStatic: true }
+);
 
-  console.log(
-    "Physics simulation started after",
-    START_DELAY / 1000,
-    "seconds"
-  );
-}, START_DELAY);
+// add all of the bodies to the world
+Composite.add(engine.world, [ground, leftWall, rightWall]);
 
-// Setup function that creates all physics bodies
-function setupPhysicsWorld() {
-  createCircle();
-  createSvgBodies();
-
-  var ground = Bodies.rectangle(
-    matterContainer.clientWidth / 2,
-    matterContainer.clientHeight + THICCNESS / 2,
-    27184,
-    THICCNESS,
-    { isStatic: true }
-  );
-
-  let leftWall = Bodies.rectangle(
-    0 - THICCNESS / 2,
-    matterContainer.clientHeight / 2,
-    THICCNESS,
-    matterContainer.clientHeight * 5,
-    {
-      isStatic: true,
+let mouse = Matter.Mouse.create(render.canvas);
+let mouseConstraint = Matter.MouseConstraint.create(engine, {
+  mouse: mouse,
+  constraint: {
+    stiffness: 0.2,
+    render: {
+      visible: false
     }
-  );
+  }
+});
 
-  let rightWall = Bodies.rectangle(
-    matterContainer.clientWidth + THICCNESS / 2,
-    matterContainer.clientHeight / 2,
-    THICCNESS,
-    matterContainer.clientHeight * 5,
-    { isStatic: true }
-  );
+Composite.add(engine.world, mouseConstraint);
 
-  // add all of the bodies to the world
-  Composite.add(engine.world, [ground, leftWall, rightWall]);
+// allow scroll through the canvas
+mouseConstraint.mouse.element.removeEventListener(
+  "mousewheel",
+  mouseConstraint.mouse.mousewheel
+);
+mouseConstraint.mouse.element.removeEventListener(
+  "DOMMouseScroll",
+  mouseConstraint.mouse.mousewheel
+);
 
-  let mouse = Matter.Mouse.create(render.canvas);
-  let mouseConstraint = Matter.MouseConstraint.create(engine, {
-    mouse: mouse,
-    constraint: {
-      stiffness: 0.2,
-      render: {
-        visible: false,
-      },
-    },
-  });
+// run the renderer
+Render.run(render);
 
-  Composite.add(engine.world, mouseConstraint);
+// create runner
+var runner = Runner.create();
 
-  // allow scroll through the canvas
-  mouseConstraint.mouse.element.removeEventListener(
-    "mousewheel",
-    mouseConstraint.mouse.mousewheel
-  );
-  mouseConstraint.mouse.element.removeEventListener(
-    "DOMMouseScroll",
-    mouseConstraint.mouse.mousewheel
-  );
-
-  console.log("Physics world set up, waiting to start");
-}
+// run the engine
+Runner.run(runner, engine);
+console.log(Composite.allBodies(engine.world));
 
 function createCircle() {
   let circleDiameter =
@@ -129,8 +114,8 @@ function createCircle() {
       restitution: 0.8,
       render: {
         fillStyle: "#ECA869",
-        strokeStyle: "#ECA869",
-      },
+        strokeStyle: "#ECA869"
+      }
     }
   );
   Composite.add(engine.world, circle);
@@ -155,8 +140,8 @@ function createSvgBodies() {
         render: {
           fillStyle: "#464655",
           strokeStyle: "#464655",
-          lineWidth: 1,
-        },
+          lineWidth: 1
+        }
       }
     );
     Composite.add(engine.world, svgBody);
@@ -205,3 +190,4 @@ function handleResize(matterContainer) {
 }
 
 window.addEventListener("resize", () => handleResize(matterContainer));
+</script>
