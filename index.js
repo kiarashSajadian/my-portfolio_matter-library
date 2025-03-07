@@ -1,7 +1,3 @@
-<script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.18.0/matter.min.js" integrity="sha512-5T245ZTH0m0RfONiFm2NF0zcYcmAuNzcGyPSQ18j8Bs5Pbfhp5HP1hosrR8XRt5M3kSRqzjNMYpm2+it/AUX/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="https://cdn.jsdelivr.net/npm/pathseg@1.2.1/pathseg.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/poly-decomp@0.3.0/build/decomp.min.js"></script>
-<script>
 const THICCNESS = 60;
 const SVG_PATH_SELECTOR = "#matter-path";
 const SVG_WIDTH_IN_PX = 100;
@@ -32,8 +28,8 @@ var render = Render.create({
     height: matterContainer.clientHeight,
     background: "transparent",
     wireframes: false,
-    showAngleIndicator: false
-  }
+    showAngleIndicator: false,
+  },
 });
 
 createCircle();
@@ -53,7 +49,7 @@ let leftWall = Bodies.rectangle(
   THICCNESS,
   matterContainer.clientHeight * 5,
   {
-    isStatic: true
+    isStatic: true,
   }
 );
 
@@ -74,9 +70,9 @@ let mouseConstraint = Matter.MouseConstraint.create(engine, {
   constraint: {
     stiffness: 0.2,
     render: {
-      visible: false
-    }
-  }
+      visible: false,
+    },
+  },
 });
 
 Composite.add(engine.world, mouseConstraint);
@@ -114,8 +110,8 @@ function createCircle() {
       restitution: 0.8,
       render: {
         fillStyle: "#ECA869",
-        strokeStyle: "#ECA869"
-      }
+        strokeStyle: "#ECA869",
+      },
     }
   );
   Composite.add(engine.world, circle);
@@ -140,8 +136,8 @@ function createSvgBodies() {
         render: {
           fillStyle: "#464655",
           strokeStyle: "#464655",
-          lineWidth: 1
-        }
+          lineWidth: 1,
+        },
       }
     );
     Composite.add(engine.world, svgBody);
@@ -190,4 +186,3 @@ function handleResize(matterContainer) {
 }
 
 window.addEventListener("resize", () => handleResize(matterContainer));
-</script>
