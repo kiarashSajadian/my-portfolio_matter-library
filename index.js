@@ -1,6 +1,3 @@
-<script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.18.0/matter.min.js" integrity="sha512-5T245ZTH0m0RfONiFm2NF0zcYcmAuNzcGyPSQ18j8Bs5Pbfhp5HP1hosrR8XRt5M3kSRqzjNMYpm2+it/AUX/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="https://cdn.jsdelivr.net/npm/pathseg@1.2.1/pathseg.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/poly-decomp@0.3.0/build/decomp.min.js"></script>
 // Set the delay time in milliseconds before starting the physics simulation
 const START_DELAY = 2000; // 2 seconds
 
@@ -34,8 +31,8 @@ var render = Render.create({
     height: matterContainer.clientHeight,
     background: "transparent",
     wireframes: false,
-    showAngleIndicator: false
-  }
+    showAngleIndicator: false,
+  },
 });
 
 // All setup happens immediately, but we'll start the physics after the delay
@@ -45,21 +42,25 @@ setupPhysicsWorld();
 setTimeout(() => {
   // run the renderer
   Render.run(render);
-  
+
   // create runner
   var runner = Runner.create();
-  
+
   // run the engine
   Runner.run(runner, engine);
-  
-  console.log("Physics simulation started after", START_DELAY/1000, "seconds");
+
+  console.log(
+    "Physics simulation started after",
+    START_DELAY / 1000,
+    "seconds"
+  );
 }, START_DELAY);
 
 // Setup function that creates all physics bodies
 function setupPhysicsWorld() {
   createCircle();
   createSvgBodies();
-  
+
   var ground = Bodies.rectangle(
     matterContainer.clientWidth / 2,
     matterContainer.clientHeight + THICCNESS / 2,
@@ -67,17 +68,17 @@ function setupPhysicsWorld() {
     THICCNESS,
     { isStatic: true }
   );
-  
+
   let leftWall = Bodies.rectangle(
     0 - THICCNESS / 2,
     matterContainer.clientHeight / 2,
     THICCNESS,
     matterContainer.clientHeight * 5,
     {
-      isStatic: true
+      isStatic: true,
     }
   );
-  
+
   let rightWall = Bodies.rectangle(
     matterContainer.clientWidth + THICCNESS / 2,
     matterContainer.clientHeight / 2,
@@ -85,23 +86,23 @@ function setupPhysicsWorld() {
     matterContainer.clientHeight * 5,
     { isStatic: true }
   );
-  
+
   // add all of the bodies to the world
   Composite.add(engine.world, [ground, leftWall, rightWall]);
-  
+
   let mouse = Matter.Mouse.create(render.canvas);
   let mouseConstraint = Matter.MouseConstraint.create(engine, {
     mouse: mouse,
     constraint: {
       stiffness: 0.2,
       render: {
-        visible: false
-      }
-    }
+        visible: false,
+      },
+    },
   });
-  
+
   Composite.add(engine.world, mouseConstraint);
-  
+
   // allow scroll through the canvas
   mouseConstraint.mouse.element.removeEventListener(
     "mousewheel",
@@ -111,7 +112,7 @@ function setupPhysicsWorld() {
     "DOMMouseScroll",
     mouseConstraint.mouse.mousewheel
   );
-  
+
   console.log("Physics world set up, waiting to start");
 }
 
@@ -128,8 +129,8 @@ function createCircle() {
       restitution: 0.8,
       render: {
         fillStyle: "#ECA869",
-        strokeStyle: "#ECA869"
-      }
+        strokeStyle: "#ECA869",
+      },
     }
   );
   Composite.add(engine.world, circle);
@@ -154,8 +155,8 @@ function createSvgBodies() {
         render: {
           fillStyle: "#464655",
           strokeStyle: "#464655",
-          lineWidth: 1
-        }
+          lineWidth: 1,
+        },
       }
     );
     Composite.add(engine.world, svgBody);
